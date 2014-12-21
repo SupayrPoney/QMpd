@@ -111,13 +111,23 @@ class MainWindow(QtGui.QMainWindow):
         songsDisplayer.verticalHeader().hide()
 
         songNameHeader = songsDisplayer.horizontalHeader()
-        songNameHeader.setStretchLastSection(True)  
+        songNameHeader.setStretchLastSection(True)
+
+        currentPlaylistDisplayer = QtGui.QTableWidget(songsNumber, 4) 
+        currentPlaylistDisplayer.setHorizontalHeaderLabels("Durée;Artiste;Album;Titre".split(";"))
+        currentPlaylistDisplayer.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding);
+        currentPlaylistDisplayer.setShowGrid(False)
+        currentPlaylistDisplayer.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+        currentPlaylistDisplayer.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+        currentPlaylistDisplayer.verticalHeader().hide()
+
+
+        currentSongNameHeader = currentPlaylistDisplayer.horizontalHeader()
+        currentSongNameHeader.setStretchLastSection(True)
 
 
         songsDisplayerLayout.addWidget(songsDisplayer,0,0)
         songsDisplayerWidget.setLayout(songsDisplayerLayout)
-
-        button2 = QtGui.QPushButton("Allo")
 
         horizontalSplitter.addWidget(view)
         horizontalSplitter.addWidget(songsDisplayerWidget)
@@ -127,7 +137,7 @@ class MainWindow(QtGui.QMainWindow):
         verticalSplitter = QtGui.QSplitter()
         verticalSplitter.setOrientation(QtCore.Qt.Vertical)
         verticalSplitter.addWidget(horizontalSplitter)
-        verticalSplitter.addWidget(button2)
+        verticalSplitter.addWidget(currentPlaylistDisplayer)
 
         self.mainLayout.addWidget(verticalSplitter,0,0)
 
