@@ -7,8 +7,7 @@ import os
 from PyQt4 import QtGui, QtCore, Qt
 from PyQt4.QtCore import QDir
 
-import TreeWidget, ButtonsWidget
-
+#import TreeWidget, ButtonsWidget
 
 
 class MainWindow(QtGui.QMainWindow):
@@ -79,7 +78,7 @@ class MainWindow(QtGui.QMainWindow):
         #self.mainLayout.addWidget(self.buttons,0,0)
 
 
-    def initArborescence(self,path = QDir.rootPath()):
+    def initArborescence(self,path = QDir.rootPath(),songsNumber = 3):
 
         horizontalSplitter = QtGui.QSplitter()
         # The model.
@@ -100,11 +99,30 @@ class MainWindow(QtGui.QMainWindow):
         view.setColumnHidden(2,True)
         view.setColumnHidden(3,True)
 
-        button = QtGui.QPushButton("Coucou")
+        songsDisplayerLayout = QtGui.QGridLayout()
+        songsDisplayerWidget = QtGui.QWidget()
+
+        songsDisplayer = QtGui.QTableWidget(songsNumber, 4) 
+        songsDisplayer.setHorizontalHeaderLabels("Durée;Artiste;Album;Titre".split(";"))
+        songsDisplayer.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding);
+        songsDisplayer.setShowGrid(False)
+        songsDisplayer.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+        songsDisplayer.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+        songsDisplayer.verticalHeader().hide()
+
+        songNameHeader = songsDisplayer.horizontalHeader()
+        songNameHeader.setStretchLastSection(True)  
+
+
+        songsDisplayerLayout.addWidget(songsDisplayer,0,0)
+        songsDisplayerWidget.setLayout(songsDisplayerLayout)
+
         button2 = QtGui.QPushButton("Allo")
 
         horizontalSplitter.addWidget(view)
-        horizontalSplitter.addWidget(button)
+        horizontalSplitter.addWidget(songsDisplayerWidget)
+
+        horizontalSplitter.setSizes([self.mainWidget.geometry().width()/8,7*self.mainWidget.geometry().width()/8])
 
         verticalSplitter = QtGui.QSplitter()
         verticalSplitter.setOrientation(QtCore.Qt.Vertical)
