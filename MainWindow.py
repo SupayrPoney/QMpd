@@ -4,7 +4,10 @@
 import sys
 import os
 
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtGui, QtCore, Qt
+from PyQt4.QtCore import QDir
+
+import TreeWidget, ButtonsWidget
 
 
 
@@ -25,19 +28,25 @@ class MainWindow(QtGui.QMainWindow):
         """             
         # Windows title
         self.setWindowTitle("QMpd")
+        self.mainWidget = QtGui.QWidget()
+        self.setCentralWidget(self.mainWidget)
 
         self._statusBar = self.statusBar()
-        self._statusBar.showMessage('Welcome!')#TODO set current song
+        self._statusBar.showMessage('QMPD v0.0.1')#TODO set current song
+
+        self.mainLayout = QtGui.QGridLayout()
 
         self.initMenu()
 
-        self.initToolBar()
+        self.initArborescence()
+
+        #self.initButtons()
    
         self.showMaximized()
 
     def displayHelp(self):
         """ """
-        QtGui.QMessageBox.information(self, "Help", "MPD Client")
+        QtGui.QMessageBox.information(self, "Help", "MPD Client with Qt")
 
     def displayAbout(self):
         """ Display some info"""
@@ -65,27 +74,46 @@ class MainWindow(QtGui.QMainWindow):
         aboutAction.triggered.connect(self.displayAbout)
         helpMenu.addAction(aboutAction)
 
+    def initButtons(self):
+        self.buttons = ButtonsWidget.ButtonsWidget(self)
+        #self.mainLayout.addWidget(self.buttons,0,0)
 
-    def initToolBar(self):
-        """ This method will initate the toolsBar"""
 
-        previousAction = QtGui.QAction( "Previous", self)
-        #reloadAction.setShortcut("Ctrl+R")
-        previousAction.setStatusTip("Previous")
-        previousAction.triggered.connect(self.previous)
-        toolbar.addAction(previousAction)
+    def initArborescence(self,path = QDir.rootPath()):
 
-        pauseAction = QtGui.QAction( "Play", self)
-        pauseAction.setShortcut("Ctrl+P")
-        pauseAction.setStatusTip("Play/Pause")
-        pauseAction.triggered.connect(self.play)
-        toolbar.addAction(pauseAction)
+        horizontalSplitter = QtGui.QSplitter()
+        # The model.
+        model = QtGui.QFileSystemModel()
+        # You can setRootPath to any path.
+        model.setRootPath(path)
+        # List of views.
+        views = []
+        # Create the view in the splitter.
+        view = QtGui.QTreeView()
+        view.setHeaderHidden(True)
+        # Set the model of the view.
+        view.setModel(model)
+        # Set the root index of the view as the user's home directory.
+        view.setRootIndex(model.index(path))
 
-        nextAction = QtGui.QAction( "Next", self)
-        #reloadAction.setShortcut("Ctrl+R")
-        nextAction.setStatusTip("Next")
-        nextAction.triggered.connect(self.next)
-        toolbar.addAction(nextAction)
+        view.setColumnHidden(1,True)
+        view.setColumnHidden(2,True)
+        view.setColumnHidden(3,True)
+
+        button = QtGui.QPushButton("Coucou")
+        button2 = QtGui.QPushButton("Allo")
+
+        horizontalSplitter.addWidget(view)
+        horizontalSplitter.addWidget(button)
+
+        verticalSplitter = QtGui.QSplitter()
+        verticalSplitter.setOrientation(QtCore.Qt.Vertical)
+        verticalSplitter.addWidget(horizontalSplitter)
+        verticalSplitter.addWidget(button2)
+
+        self.mainLayout.addWidget(verticalSplitter,0,0)
+
+        self.mainWidget.setLayout(self.mainLayout)
 
     def previous(self):
         pass
