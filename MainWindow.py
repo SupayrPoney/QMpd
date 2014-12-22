@@ -7,7 +7,7 @@ import os
 from PyQt4 import QtGui, QtCore, Qt
 from PyQt4.QtCore import QDir
 
-#import TreeWidget, ButtonsWidget
+import TreeWidget, SongListWidget#, ButtonsWidget
 
 
 class MainWindow(QtGui.QMainWindow):
@@ -80,68 +80,41 @@ class MainWindow(QtGui.QMainWindow):
 
     def initArborescence(self,path = QDir.rootPath(),songsNumber = 3):
 
-        horizontalSplitter = QtGui.QSplitter()
-        # The model.
-        model = QtGui.QFileSystemModel()
-        # You can setRootPath to any path.
-        model.setRootPath(path)
+        self.horizontalSplitter = QtGui.QSplitter()
+
         # List of views.
         views = []
         # Create the view in the splitter.
-        view = QtGui.QTreeView()
-        view.setHeaderHidden(True)
-        # Set the model of the view.
-        view.setModel(model)
-        # Set the root index of the view as the user's home directory.
-        view.setRootIndex(model.index(path))
-
-        view.setColumnHidden(1,True)
-        view.setColumnHidden(2,True)
-        view.setColumnHidden(3,True)
+        view = TreeWidget.TreeWidget(self)
 
         songsDisplayerLayout = QtGui.QGridLayout()
         songsDisplayerWidget = QtGui.QWidget()
 
-        songsDisplayer = QtGui.QTableWidget(songsNumber, 4) 
-        songsDisplayer.setHorizontalHeaderLabels("Durée;Artiste;Album;Titre".split(";"))
-        songsDisplayer.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding);
-        songsDisplayer.setShowGrid(False)
-        songsDisplayer.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
-        songsDisplayer.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
-        songsDisplayer.verticalHeader().hide()
+        # Upleft widget. Shows the songs in a directory
+        songsDisplayer = SongListWidget.SongListWidget(songsNumber) 
 
-        songNameHeader = songsDisplayer.horizontalHeader()
-        songNameHeader.setStretchLastSection(True)
-
-        currentPlaylistDisplayer = QtGui.QTableWidget(songsNumber, 4) 
-        currentPlaylistDisplayer.setHorizontalHeaderLabels("Durée;Artiste;Album;Titre".split(";"))
-        currentPlaylistDisplayer.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding);
-        currentPlaylistDisplayer.setShowGrid(False)
-        currentPlaylistDisplayer.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
-        currentPlaylistDisplayer.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
-        currentPlaylistDisplayer.verticalHeader().hide()
-
-
-        currentSongNameHeader = currentPlaylistDisplayer.horizontalHeader()
-        currentSongNameHeader.setStretchLastSection(True)
-
+        #Bottom widget, displays the current playlist
+        currentPlaylistDisplayer = SongListWidget.SongListWidget(songsNumber) 
 
         songsDisplayerLayout.addWidget(songsDisplayer,0,0)
         songsDisplayerWidget.setLayout(songsDisplayerLayout)
 
-        horizontalSplitter.addWidget(view)
-        horizontalSplitter.addWidget(songsDisplayerWidget)
+        self.horizontalSplitter.addWidget(view)
+        self.horizontalSplitter.addWidget(songsDisplayerWidget)
 
-        horizontalSplitter.setSizes([self.mainWidget.geometry().width()/8,7*self.mainWidget.geometry().width()/8])
+        self.horizontalSplitter.setSizes([self.mainWidget.geometry().width()/8,7*self.mainWidget.geometry().width()/8])
 
-        verticalSplitter = QtGui.QSplitter()
-        verticalSplitter.setOrientation(QtCore.Qt.Vertical)
-        verticalSplitter.addWidget(horizontalSplitter)
-        verticalSplitter.addWidget(currentPlaylistDisplayer)
+        self.verticalSplitter = QtGui.QSplitter()
+        self.verticalSplitter.setOrientation(QtCore.Qt.Vertical)
+        self.verticalSplitter.addWidget(self.horizontalSplitter)
+        self.verticalSplitter.addWidget(currentPlaylistDisplayer)
 
-        self.mainLayout.addWidget(verticalSplitter,0,0)
+        self.mainLayout.addWidget(self.verticalSplitter,0,0)
 
         self.mainWidget.setLayout(self.mainLayout)
+
+    def setCurrentFolderSongs(self):
+        pass
 
     def previous(self):
         pass
